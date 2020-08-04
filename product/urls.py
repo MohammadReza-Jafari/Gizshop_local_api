@@ -4,8 +4,9 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.GetAllProductView.as_view(), name='get_all_product'),
-    path('<int:pk>/', views.GetProductView.as_view(), name='manage_product'),
+    path('', views.GetAllProductView.as_view(), name='product_list'),
+    path('<int:pk>/', views.GetProductView.as_view(), name='single_product'),
+    # admin url
     path('create/', views.CreateProductView.as_view(), name='create'),
     path('edit/<int:pk>/', views.EditProductView.as_view(), name='edit_product'),
     path('delete/<int:pk>/', views.DeleteProductView.as_view(), name='delete_product'),
