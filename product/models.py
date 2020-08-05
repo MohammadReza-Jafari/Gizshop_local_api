@@ -27,8 +27,10 @@ class Product(models.Model):
     brand = models.CharField(max_length=256)
     store = models.CharField(max_length=256)
     rating = models.FloatField(null=True)
-    warranty = models.CharField(max_length=256)
+    warranty = models.CharField(max_length=256, null=True)
     description = models.TextField(null=False)
+    amazing = models.BooleanField(default=False, null=True)
+    discountPercent = models.IntegerField(null=True, default=0)
 
     # relation
     colors = models.ManyToManyField(Color, null=True, related_name='colors')

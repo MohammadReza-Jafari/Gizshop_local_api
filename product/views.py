@@ -12,15 +12,22 @@ from . import models
 
 
 class GetAllProductView(generics.ListAPIView):
-    queryset = models.Product.objects.all()
-    serializer_class = serializers.ShowProductSerializer
+    serializer_class = serializers.ListProductSerializer
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = ('perName', 'engName', 'brand', 'warranty')
     ordering_fields = ('currentPrice', 'rating')
 
+    def get_queryset(self):
+        amazing = bool(self.request.query_params.get('amazing', None))
+
+        if amazing:
+            return models.Product.objects.filter(amazing=True)
+
+        return models.Product.objects.order_by('pk').all()
+
 
 class GetProductView(generics.RetrieveAPIView):
-    serializer_class = serializers.ShowProductSerializer
+    serializer_class = serializers.SingleProductSerializer
 
     def get_object(self):
         return get_object_or_404(models.Product, pk=self.kwargs['pk'])
@@ -103,3 +110,58 @@ class DeleteProductImageView(APIView):
             return Response({'result': 'success'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Image Does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetProductPriceView(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
+
+    def get(self, request, pk, *args, **kwargs):
+        product = get_object_or_404(models.Product, pk=pk)
+        return Response(
+            {'basePrice': product.basePrice, 'currentPrice': product.currentPrice},
+            status=status.HTTP_200_OK
+        )
+
+
+class AddToAmazingOffer(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
+
+    def post(self, request, pk, *args, **kwargs):
+        amazing_offers = models.Product.objects.filter(amazing=True)
+        if len(amazing_offers) == 15:
+            return Response(
+                {'error': "تعداد کالاهای شگفت انگیز به حد نصاب (15) رسیده است"},
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
+        product = get_object_or_404(models.Product, pk=pk)
+
+        try:
+            discount = int(request.data['discountPercent'])
+        except ValueError as e:
+            return Response({'error': 'درصد تخفیف باید عدد باشد'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not 0 < discount < 51:
+            return Response(
+                {'error': "درصد تخفیف باید بین 0 تا 50 باشد"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        product.amazing = True
+        product.discountPercent = discount
+        product.save()
+        return Response({'result': 'success'}, status=status.HTTP_200_OK)
+
+
+class DeleteFromAmazingOffers(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
+
+    def get(self, request, pk, *args, **kwargs):
+        product = get_object_or_404(models.Product, pk=pk)
+        product.discountPercent = 0
+        product.amazing = False
+        product.save()
+
+        return Response({'result': 'success'}, status=status.HTTP_200_OK)

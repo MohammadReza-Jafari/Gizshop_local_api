@@ -28,7 +28,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ShowProductSerializer(serializers.ModelSerializer):
+class SingleProductSerializer(serializers.ModelSerializer):
     colors = ColorSerializer(many=True)
     subCategories = category_serializers.SubCategorySerializer(many=True, read_only=False)
     images = ImageSerializer(many=True, read_only=True)
@@ -37,7 +37,19 @@ class ShowProductSerializer(serializers.ModelSerializer):
         model = models.Product
         fields = (
             'id', 'perName', 'engName', 'basePrice', 'currentPrice', 'brand', 'store',
-            'rating', 'warranty', 'description', 'colors', 'subCategories', 'images'
+            'rating', 'warranty', 'amazing', 'discountPercent', 'description', 'colors',
+            'subCategories', 'images'
+        )
+
+
+class ListProductSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True)
+
+    class Meta:
+        model = models.Product
+        fields = (
+            'id', 'perName', 'engName', 'basePrice', 'currentPrice',
+            'amazing', 'discountPercent', 'store', 'rating', 'images'
         )
 
 
