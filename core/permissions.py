@@ -6,3 +6,10 @@ class IsAdmin(BasePermission):
         if request.user.is_superuser:
             return True
         return False
+
+
+class IsBossOrOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_boss:
+            return True
+        return request.user == obj.author

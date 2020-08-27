@@ -20,7 +20,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '30^7!3*25r^+v42w*c%(q6=!8w%zytl1+q9cvm+!_hpm4d&+l%'
+KEY = open('F:\\work-space\\rest\\secret_keys\\giz_api_local.txt', mode='r').read()
+SECRET_KEY = KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     'core',
     'product',
     'category',
-    'comment'
+    'comment',
+    'article'
 ]
 
 MIDDLEWARE = [
@@ -83,12 +85,14 @@ WSGI_APPLICATION = 'gizshop_api_local.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+
+DATABASE = open('F:\\password.txt', mode='r').read().split('\n')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'giz_api_local_db',
-        'USER': 'postgres',
-        'PASSWORD': 'django1234',
+        'USER': DATABASE[0],
+        'PASSWORD': DATABASE[1],
         'PORT': '5432',
         'HOST': 'localhost'
     }
@@ -119,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
