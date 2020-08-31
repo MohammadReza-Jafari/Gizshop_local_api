@@ -34,12 +34,14 @@ class Product(models.Model):
 
     # relation
     colors = models.ManyToManyField(Color, null=True, related_name='colors')
-    subCategories = models.ManyToManyField(
-        'category.SubCategory', null=True, related_name='subCategories'
+    subCategory = models.ForeignKey(
+        'category.SubCategory', on_delete=models.CASCADE, related_name='products', null=True
     )
 
 
 class Image(models.Model):
     image = models.ImageField(null=True, upload_to=imageSavePath)
-    product = models.ForeignKey(Product,related_name='images', on_delete=models.CASCADE, null=False)
+    product = models.ForeignKey(
+        Product, related_name='images', on_delete=models.CASCADE, null=False
+    )
 

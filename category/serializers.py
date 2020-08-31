@@ -17,6 +17,14 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CategoryReadSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Category
+        fields = '__all__'
+        depth = 1
+
+
 class SubCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -24,12 +32,20 @@ class SubCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SubCategoryReadSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.SubCategory
+        fields = '__all__'
+        depth = 2
+
+
 class CategoryNestedSerializer(serializers.ModelSerializer):
     sub_categories = SubCategorySerializer(many=True)
 
     class Meta:
         model = models.Category
-        fields = ('id', 'title', 'main_category', 'sub_categories')
+        fields = ('id', 'title', 'sub_categories')
 
 
 class MainCategoryListSerializer(serializers.ModelSerializer):

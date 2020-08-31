@@ -38,7 +38,7 @@ class CategoryListView(generics.ListAPIView):
     queryset = models.Category.objects.all()
     permission_classes = (permissions.IsAdminUser,)
     authentication_classes = (authentication.TokenAuthentication,)
-    serializer_class = serializers.CategorySerializer
+    serializer_class = serializers.CategoryNestedSerializer
 
 
 class MangeCategoryView(generics.RetrieveUpdateDestroyAPIView):
@@ -56,7 +56,7 @@ class CreateSubCategoryView(generics.CreateAPIView):
 
 class SubCategoryListView(generics.ListAPIView):
     queryset = models.SubCategory.objects.all()
-    serializer_class = serializers.SubCategorySerializer
+    serializer_class = serializers.SubCategoryReadSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAdminUser,)
 

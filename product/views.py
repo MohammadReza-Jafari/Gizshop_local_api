@@ -26,6 +26,42 @@ class GetAllProductView(generics.ListAPIView):
         return models.Product.objects.order_by('pk').all()
 
 
+class GetProductByMainCategory(generics.ListAPIView):
+    serializer_class = serializers.ListProductSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = ('perName', 'engName', 'brand', 'warranty')
+    ordering_fields = ('currentPrice', 'rating')
+
+    def get_queryset(self):
+        return models.Product.objects.filter(
+            subCategory__category__main_category_id=self.kwargs['main_category_id']
+        )
+
+
+class GetProductByCategory(generics.ListAPIView):
+    serializer_class = serializers.ListProductSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = ('perName', 'engName', 'brand', 'warranty')
+    ordering_fields = ('currentPrice', 'rating')
+
+    def get_queryset(self):
+        return models.Product.objects.filter(
+            subCategory__category_id=self.kwargs['category_id']
+        )
+
+
+class GetProductBySubCategory(generics.ListAPIView):
+    serializer_class = serializers.ListProductSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = ('perName', 'engName', 'brand', 'warranty')
+    ordering_fields = ('currentPrice', 'rating')
+
+    def get_queryset(self):
+        return models.Product.objects.filter(
+            subCategory_id=self.kwargs['sub_category_id']
+        )
+
+
 class GetProductView(generics.RetrieveAPIView):
     serializer_class = serializers.SingleProductSerializer
 
@@ -45,7 +81,6 @@ class CreateProductView(APIView):
 
         if ser.is_valid():
             colors = ser.validated_data.pop('colors')
-            sub_categories = ser.validated_data.pop('subCategories')
             product = models.Product.objects.create(**ser.validated_data)
 
             for image in images:
@@ -63,7 +98,6 @@ class CreateProductView(APIView):
                     )
             product.save()
             product.colors.set(colors)
-            product.subCategories.set(sub_categories)
             return Response({'result': 'success'}, status=status.HTTP_201_CREATED)
         return Response(data=ser.errors, status=status.HTTP_400_BAD_REQUEST)
 

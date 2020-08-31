@@ -30,7 +30,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class SingleProductSerializer(serializers.ModelSerializer):
     colors = ColorSerializer(many=True)
-    subCategories = category_serializers.SubCategorySerializer(many=True, read_only=False)
+    subCategory = category_serializers.SubCategoryReadSerializer(read_only=False)
     images = ImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -38,7 +38,7 @@ class SingleProductSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'perName', 'engName', 'basePrice', 'currentPrice', 'brand', 'store',
             'rating', 'warranty', 'amazing', 'discountPercent', 'description', 'colors',
-            'subCategories', 'images'
+            'subCategory', 'images'
         )
 
 
@@ -58,9 +58,8 @@ class EditProductSerializer(serializers.ModelSerializer):
         queryset=models.Color.objects.all(),
         many=True
     )
-    subCategories = serializers.PrimaryKeyRelatedField(
+    subCategory = serializers.PrimaryKeyRelatedField(
         queryset=category_models.SubCategory.objects.all(),
-        many=True
     )
     images = ImageSerializer(many=True, read_only=True)
 
@@ -68,7 +67,7 @@ class EditProductSerializer(serializers.ModelSerializer):
         model = models.Product
         fields = (
             'id', 'perName', 'engName', 'basePrice', 'currentPrice', 'brand', 'store',
-            'rating', 'warranty', 'description', 'colors', 'subCategories', 'images'
+            'rating', 'warranty', 'description', 'colors', 'subCategory', 'images'
         )
 
 
